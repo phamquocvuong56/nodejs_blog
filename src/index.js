@@ -5,10 +5,19 @@ const morgan = require('morgan');
 const path= require('path');
 const handlebars= require('express-handlebars');
 const { extname } = require('path');
+const { urlencoded } = require('express');
+const route= require('./routes');
 //http logger
-app.use(morgan('combined'))
+// app.use(morgan('combined'))
 
 app.use(express.static(path.join(__dirname, 'public')))
+
+//middleware
+app.use(express.urlencoded({
+  extended: true
+}));
+app.use(express.json());
+
 //template engine
 app.engine('hbs', handlebars({
   extname: '.hbs'
@@ -16,12 +25,8 @@ app.engine('hbs', handlebars({
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'resources/views'));
 
-app.get('/', (req, res) => {
-  res.render('home');
-})
-app.get('/news', (req, res) => {
-  res.render('news');
-})
+//routes init
+route(app);
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
